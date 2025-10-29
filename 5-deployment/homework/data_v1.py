@@ -1,6 +1,6 @@
 import requests
 
-url = 'http://0.0.0.0:9000/predict'
+url = 'http://0.0.0.0:9696/predict'
 
 x = {
     "lead_source": "paid_ads",

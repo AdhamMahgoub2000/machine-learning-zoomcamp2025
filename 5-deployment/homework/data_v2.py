@@ -1,6 +1,6 @@
 import requests
 
-url = 'http://0.0.0.0:8080/predict'
+url = 'http://0.0.0.0:9696/predict'
 
 x = {
     "lead_source": "organic_search",
