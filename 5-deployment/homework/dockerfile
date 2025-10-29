@@ -1,0 +1,23 @@
+# 1️⃣ Base image that already has Python and your model
+FROM agrigorev/zoomcamp-model:2025
+
+# 2️⃣ Copy uv binary (optional, only if you use uv)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# 3️⃣ Set working directory
+WORKDIR /app
+
+# 4️⃣ Copy dependency files first (better caching)
+COPY pyproject.toml uv.lock ./
+
+# 5️⃣ Install dependencies (this installs everything in pyproject.toml)
+RUN uv sync --locked
+
+# 6️⃣ Copy your FastAPI app and model files
+COPY fastapi_v3.py .
+
+# 7️⃣ Expose the port FastAPI will use
+EXPOSE 9696
+
+# 8️⃣ Run the app with uvicorn
+CMD ["uv", "run", "uvicorn", "fastapi_v3:app", "--host", "0.0.0.0", "--port", "9696"]

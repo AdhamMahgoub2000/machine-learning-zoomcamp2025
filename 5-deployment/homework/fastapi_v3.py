@@ -3,7 +3,7 @@ import pickle
 import uvicorn
 
 
-with open('pipeline_v1.bin', 'rb') as f_in:
+with open('/code/pipeline_v2.bin', 'rb') as f_in:
     pipeline = pickle.load(f_in)
 
 app = FastAPI()
