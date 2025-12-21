@@ -1,7 +1,6 @@
 import onnxruntime as ort
 from io import BytesIO
 from urllib import request
-from torchvision import transforms
 from PIL import Image
 import numpy as np
 
@@ -24,28 +23,25 @@ def download_image(url):
     return img
 
 
-def prepare_image(img, target_size):
-    if img.mode != 'RGB':
-        img = img.convert('RGB')
-    img = img.resize(target_size, Image.NEAREST)
-    return img
 def preprocess(url):
-
-    transforms = transforms.Compose([
-    transforms.Resize((200, 200)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-        ) 
-        ])
     img = download_image(url)
-    img = prepare_image(img, (200, 200))
-    X = transforms(img)
-    X_np = X.numpy()
-    X_np = np.expand_dims(X_np, axis=0)
-    return X_np
 
+    if img.mode != "RGB":
+        img = img.convert("RGB")
+
+    img = img.resize((200, 200), Image.BILINEAR)
+
+    x = np.array(img).astype("float32") / 255.0
+    x = np.transpose(x, (2, 0, 1))  # HWC → CHW
+
+    mean = np.array([0.485, 0.456, 0.406], dtype="float32").reshape(3, 1, 1)
+    std = np.array([0.229, 0.224, 0.225], dtype="float32").reshape(3, 1, 1)
+
+    x = (x - mean) / std
+    x = np.expand_dims(x, axis=0)
+    x = x.astype("float32") 
+
+    return x
 def predict(url):
     X = preprocess(url)
     result = session.run([output_name], {input_name: X})
@@ -55,6 +51,8 @@ def predict(url):
 def lambda_handler(event, context):
     url = event["url"]
     result = predict(url)
-    return result
+    score = float(result[0][0][0])
 
-
+    return {
+        "prediction": score
+    }

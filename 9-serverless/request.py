@@ -1,10 +1,12 @@
 import requests
 
-url = ''
+url = "http://localhost:8080/2015-03-31/functions/function/invocations"
 
-request = {
+
+request = { 
     "url": "https://habrastorage.org/webt/yf/_d/ok/yf_dokzqy3vcritme8ggnzqlvwa.jpeg"
 }
 
-result = requests.post(url, json=request).json()
-print(result)
+result = requests.post(url, json=request)
+print(result.status_code)
+print(result.text)
