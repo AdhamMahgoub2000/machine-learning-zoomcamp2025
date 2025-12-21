@@ -42,6 +42,7 @@ def preprocess(url):
     x = x.astype("float32") 
 
     return x
+
 def predict(url):
     X = preprocess(url)
     result = session.run([output_name], {input_name: X})
